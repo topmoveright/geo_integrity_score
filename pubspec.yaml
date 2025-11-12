@@ -1,6 +1,6 @@
 name: geo_integrity_score
 description: "Detects spoofing risks and produces geo integrity scores from native sensor data."
-version: 0.0.1
+version: 0.0.1+1
 homepage: https://github.com/topmoveright/geo_integrity_score
 
 environment:

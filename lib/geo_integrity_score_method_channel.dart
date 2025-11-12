@@ -8,6 +8,7 @@ import 'src/models.dart';
 
 /// Method channel implementation for [GeoIntegrityScorePlatform].
 class MethodChannelGeoIntegrityScore extends GeoIntegrityScorePlatform {
+  /// Creates an instance that communicates with the default method channels.
   MethodChannelGeoIntegrityScore({
     MethodChannel? methodChannel,
     EventChannel? eventChannel,
@@ -23,9 +24,11 @@ class MethodChannelGeoIntegrityScore extends GeoIntegrityScorePlatform {
 
   Stream<DetectionResult>? _cachedDetectionStream;
 
+  /// Exposes the underlying [MethodChannel] for verification in tests.
   @visibleForTesting
   MethodChannel get methodChannel => _methodChannel;
 
+  /// Exposes the underlying [EventChannel] for verification in tests.
   @visibleForTesting
   EventChannel get eventChannel => _eventChannel;
 

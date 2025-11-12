@@ -1,7 +1,19 @@
 import 'package:meta/meta.dart';
 
 /// Identifies the monitoring mode presets used by the plugin.
-enum MonitoringMode { aggressive, balanced, lowPower, onDemand }
+enum MonitoringMode {
+  /// Highest sampling frequency for rapid spoofing detection.
+  aggressive,
+
+  /// Balanced sampling cadence for everyday usage.
+  balanced,
+
+  /// Reduced sampling frequency to preserve battery life.
+  lowPower,
+
+  /// Lightweight mode intended for on-demand evaluations.
+  onDemand,
+}
 
 /// Configuration that instructs the native layer how aggressively it should
 /// sample sensors and evaluate location data.
@@ -15,6 +27,7 @@ class MonitoringPolicy {
     required this.speedThreshold,
   });
 
+  /// Builds a [MonitoringPolicy] with arbitrary timing parameters.
   const MonitoringPolicy.custom({
     required Duration evaluationInterval,
     required Duration sensorWarmup,
@@ -28,6 +41,7 @@ class MonitoringPolicy {
          speedThreshold: speedThreshold,
        );
 
+  /// Preset optimized for rapid spoofing detection with higher power usage.
   const MonitoringPolicy.aggressive()
     : this._(
         mode: MonitoringMode.aggressive,
@@ -37,6 +51,7 @@ class MonitoringPolicy {
         speedThreshold: 120,
       );
 
+  /// Default preset balancing responsiveness and energy consumption.
   const MonitoringPolicy.balanced()
     : this._(
         mode: MonitoringMode.balanced,
@@ -46,6 +61,7 @@ class MonitoringPolicy {
         speedThreshold: 100,
       );
 
+  /// Lower frequency preset that prioritizes battery savings.
   const MonitoringPolicy.lowPower()
     : this._(
         mode: MonitoringMode.lowPower,
@@ -55,6 +71,7 @@ class MonitoringPolicy {
         speedThreshold: 90,
       );
 
+  /// Lightweight preset intended for burst evaluations.
   const MonitoringPolicy.onDemand()
     : this._(
         mode: MonitoringMode.onDemand,
@@ -64,12 +81,22 @@ class MonitoringPolicy {
         speedThreshold: 100,
       );
 
+  /// Monitoring mode that determines native-side presets.
   final MonitoringMode mode;
+
+  /// Interval between evaluation cycles.
   final Duration evaluationInterval;
+
+  /// Warm-up duration before sampling motion sensors.
   final Duration sensorWarmup;
+
+  /// Whether monitoring should halt automatically when idle.
   final bool autoStopOnIdle;
+
+  /// Speed threshold in meters per second considered suspicious.
   final double speedThreshold;
 
+  /// Serializes this policy into a plain map sent to the platform layer.
   Map<String, Object> toMap() {
     return <String, Object>{
       'mode': mode.name,
@@ -80,6 +107,7 @@ class MonitoringPolicy {
     };
   }
 
+  /// Returns a copy of this policy with selectively replaced fields.
   MonitoringPolicy copyWith({
     MonitoringMode? mode,
     Duration? evaluationInterval,
@@ -100,6 +128,7 @@ class MonitoringPolicy {
 /// Standardized container for geographic coordinates emitted by native layers.
 @immutable
 class DetectionLocation {
+  /// Creates a new [DetectionLocation] with optional accuracy metadata.
   const DetectionLocation({
     required this.latitude,
     required this.longitude,
@@ -108,12 +137,22 @@ class DetectionLocation {
     this.speedMetersPerSecond,
   });
 
+  /// Latitude in decimal degrees.
   final double latitude;
+
+  /// Longitude in decimal degrees.
   final double longitude;
+
+  /// Optional horizontal accuracy in meters.
   final double? accuracyMeters;
+
+  /// Optional altitude in meters above sea level.
   final double? altitudeMeters;
+
+  /// Optional instantaneous speed in meters per second.
   final double? speedMetersPerSecond;
 
+  /// Parses a [DetectionLocation] from a map received from the platform side.
   factory DetectionLocation.fromMap(Map<dynamic, dynamic> raw) {
     double? parseDouble(dynamic value) {
       if (value is num) {
@@ -145,6 +184,7 @@ class DetectionLocation {
     );
   }
 
+  /// Converts this location to a JSON-safe representation.
   Map<String, Object> toJson() {
     final Map<String, Object> json = <String, Object>{
       'latitude': latitude,
@@ -166,6 +206,7 @@ class DetectionLocation {
 /// Encapsulates the result of a detection cycle produced by the native layers.
 @immutable
 class DetectionResult {
+  /// Constructs a [DetectionResult] produced by a native detector.
   const DetectionResult({
     required this.timestamp,
     required this.fraudScore,
@@ -174,12 +215,22 @@ class DetectionResult {
     this.location,
   });
 
+  /// UTC timestamp representing when the detection was produced.
   final DateTime timestamp;
+
+  /// Aggregated spoofing score assigned by the native layer.
   final int fraudScore;
+
+  /// Individual check scores indexed by detail keys.
   final Map<String, int> details;
+
+  /// Origin platform for the detection (for example "android" or "ios").
   final String platform;
+
+  /// Optional geographic metadata accompanying the detection.
   final DetectionLocation? location;
 
+  /// Parses a [DetectionResult] from a platform channel payload.
   factory DetectionResult.fromMap(Map<dynamic, dynamic> raw) {
     final timestampValue = raw['timestamp'];
     final locationPayload = raw['location'];
@@ -203,6 +254,7 @@ class DetectionResult {
     );
   }
 
+  /// Converts this result into a JSON-safe structure for persistence or tests.
   Map<String, Object> toJson() {
     final Map<String, Object> json = <String, Object>{
       'timestamp': timestamp.millisecondsSinceEpoch,

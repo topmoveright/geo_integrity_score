@@ -5,14 +5,26 @@ import 'src/models.dart';
 export 'src/models.dart'
     show DetectionResult, DetectionLocation, MonitoringMode, MonitoringPolicy;
 
-/// Provides access to the Geo Integrity Score plugin features from Dart.
+/// Provides access to fraud detection utilities exposed by the native layers.
+///
+/// This class provides a unified interface to the Geo Integrity Score plugin
+/// features, allowing you to start and stop monitoring, perform single detection
+/// passes, and access the stream of detection results.
 class GeoIntegrityScore {
+  /// Private constructor to prevent instantiation.
   GeoIntegrityScore._();
 
+  /// Lazily resolves the active platform implementation.
+  ///
+  /// This getter returns the singleton instance of the platform implementation,
+  /// which provides access to the native layers.
   static GeoIntegrityScorePlatform get _platform =>
       GeoIntegrityScorePlatform.instance;
 
   /// Stream of detection results emitted by the native layers.
+  ///
+  /// This stream provides a continuous flow of detection results, allowing you
+  /// to react to changes in the device's location and integrity status.
   static Stream<DetectionResult> get detectionStream =>
       _platform.detectionStream;
 
